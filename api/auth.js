@@ -3,7 +3,7 @@ const { createHash, randomBytes } = require('crypto');
 const jwt = require('jsonwebtoken');
 
 // Simpan di environment variables di Vercel
-const JWT_SECRET = process.env.JWT_SECRET || 'pakasir-secret-key-change-in-production';
+const JWT_SECRET = process.env.JWT_SECRET || '7e0c9ba4bffde5f2264ebb93866f1272dd2fbe17676be414203573c4c4a73a374f1227a71db1d06913d300412648b30af423414abf113e2fa53da3a644bf711f';
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'fathirsthore@yahoo.com';
 const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD_HASH || 
     createHash('sha256').update('DX#55asDf@fathir').digest('hex');
