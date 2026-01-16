@@ -1,1 +1,196 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Pakasir Payment Gateway - Sistem pembayaran online yang aman">
+    <meta name="keywords" content="payment, gateway, qris, deposit, withdraw">
+    <meta name="author" content="Pakasir">
+    <title>Pakasir Payment Gateway</title>
+    
+    <!-- Security Meta Tags -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net">
+    
+    <!-- Icons -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💰</text></svg>">
+    
+    <!-- External CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    
+    <!-- Internal CSS -->
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading" class="loading-screen">
+        <div class="loading-spinner"></div>
+        <p>Loading Payment Gateway...</p>
+    </div>
 
+    <!-- Auth Screen -->
+    <div id="authScreen" class="auth-container">
+        <div class="auth-card">
+            <div class="logo-section">
+                <i class="fas fa-exchange-alt"></i>
+                <h2>Pakasir Payment</h2>
+                <p>Payment Gateway System</p>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm" class="auth-form">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" required autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" required autocomplete="current-password">
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+                <p class="auth-switch">Don't have an account? <a href="#" id="showRegister">Register here</a></p>
+            </form>
+
+            <!-- Register Form -->
+            <form id="registerForm" class="auth-form" style="display: none;">
+                <div class="form-group">
+                    <label for="registerName">Full Name</label>
+                    <input type="text" id="registerName" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerEmail">Email</label>
+                    <input type="email" id="registerEmail" required autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label for="registerPhone">Phone Number</label>
+                    <input type="tel" id="registerPhone" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">Password</label>
+                    <input type="password" id="registerPassword" required autocomplete="new-password" 
+                           minlength="8" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$"
+                           title="Minimal 8 karakter, mengandung huruf besar, kecil, dan angka">
+                </div>
+                <div class="form-group">
+                    <label for="registerConfirmPassword">Confirm Password</label>
+                    <input type="password" id="registerConfirmPassword" required autocomplete="new-password">
+                </div>
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-user-plus"></i> Register
+                </button>
+                <p class="auth-switch">Already have an account? <a href="#" id="showLogin">Login here</a></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="appScreen" style="display: none;">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="logo">
+                <i class="fas fa-exchange-alt"></i>
+                <div>
+                    <h1>Pakasir Payment</h1>
+                    <span>Payment Gateway & Withdrawal System</span>
+                </div>
+            </div>
+            <div class="user-info">
+                <div class="user-badge">
+                    <i class="fas fa-user"></i>
+                    <span id="userName">User</span>
+                    <span id="userRole" class="badge badge-primary">User</span>
+                </div>
+                <div class="balance">
+                    <i class="fas fa-wallet"></i>
+                    <span id="userBalance">Rp 0</span>
+                </div>
+                <button id="logoutBtn" class="btn btn-danger">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </header>
+
+        <main class="app-main">
+            <!-- Tabs Navigation -->
+            <nav class="tabs">
+                <button class="tab active" data-tab="dashboard">
+                    <i class="fas fa-home"></i> Dashboard
+                </button>
+                <button class="tab" data-tab="deposit">
+                    <i class="fas fa-qrcode"></i> Deposit
+                </button>
+                <button class="tab" data-tab="history">
+                    <i class="fas fa-history"></i> History
+                </button>
+                <button class="tab" data-tab="information">
+                    <i class="fas fa-newspaper"></i> Information
+                </button>
+                <button class="tab" data-tab="admin" id="adminTab" style="display: none;">
+                    <i class="fas fa-user-shield"></i> Admin
+                </button>
+                <button class="tab" data-tab="withdraw" id="withdrawTab" style="display: none;">
+                    <i class="fas fa-money-bill-wave"></i> Withdraw
+                </button>
+            </nav>
+
+            <!-- Tab Contents -->
+            <div class="tab-content active" id="dashboardTab">
+                <!-- Dashboard content -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <i class="fas fa-wallet"></i>
+                        <h3 id="totalBalance">Rp 0</h3>
+                        <p>Total Balance</p>
+                    </div>
+                    <!-- Add more stat cards -->
+                </div>
+            </div>
+
+            <!-- Other tabs content -->
+            <div class="tab-content" id="depositTab">
+                <!-- Deposit form -->
+            </div>
+
+            <div class="tab-content" id="withdrawTabContent">
+                <!-- Withdraw form -->
+            </div>
+
+            <div class="tab-content" id="historyTab">
+                <!-- History table -->
+            </div>
+
+            <div class="tab-content" id="informationTab">
+                <!-- News content -->
+            </div>
+
+            <div class="tab-content" id="adminTabContent">
+                <!-- Admin panel -->
+            </div>
+        </main>
+    </div>
+
+    <!-- QR Modal -->
+    <div id="qrModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Payment QR Code</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <img id="modalQRImage" src="" alt="QR Code">
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer"></div>
+
+    <!-- External JS -->
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    
+    <!-- Internal JS -->
+    <script src="/script.js" type="module"></script>
+</body>
+                      </html>
