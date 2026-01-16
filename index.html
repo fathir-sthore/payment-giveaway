@@ -20,67 +20,365 @@
     
     <!-- Internal CSS -->
     <link rel="stylesheet" href="/styles.css">
+    
+    <style>
+        /* Additional styles for error handling */
+        .error-fallback {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            z-index: 9999;
+            text-align: center;
+            padding: 50px 20px;
+        }
+        
+        .error-content {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .error-icon {
+            font-size: 4rem;
+            color: #f44336;
+            margin-bottom: 1rem;
+        }
+        
+        .error-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a237e 0%, #283593 100%);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9998;
+            transition: opacity 0.3s ease;
+        }
+        
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1.5rem;
+        }
+        
+        .loading-progress {
+            width: 200px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            margin-top: 1rem;
+            overflow: hidden;
+        }
+        
+        .loading-progress-bar {
+            height: 100%;
+            background: white;
+            width: 0%;
+            animation: progress 2s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes progress {
+            0% { width: 0%; margin-left: 0%; }
+            50% { width: 100%; margin-left: 0%; }
+            100% { width: 0%; margin-left: 100%; }
+        }
+        
+        .debug-info {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-family: monospace;
+            z-index: 10000;
+            display: none;
+        }
+        
+        /* Simple auth styles */
+        .auth-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+        }
+        
+        .auth-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            max-width: 400px;
+            width: 100%;
+        }
+        
+        .logo-section {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .logo-section i {
+            font-size: 3rem;
+            color: #3f51b5;
+            margin-bottom: 1rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #1a237e;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .btn {
+            padding: 0.875rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #3f51b5, #283593);
+            color: white;
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #4caf50, #388e3c);
+            color: white;
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #f44336, #d32f2f);
+            color: white;
+        }
+        
+        .btn-block {
+            width: 100%;
+        }
+        
+        /* App styles */
+        .app-header {
+            background: linear-gradient(135deg, #1a237e, #283593);
+            color: white;
+            padding: 1.5rem 2rem;
+            border-radius: 12px;
+            margin: 1rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            background: white;
+            padding: 0.75rem;
+            border-radius: 12px;
+            margin: 1rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            overflow-x: auto;
+        }
+        
+        .tab {
+            padding: 0.875rem 1.5rem;
+            background: none;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            color: #6c757d;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .tab.active {
+            background: #3f51b5;
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 1rem;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
 <body>
-    <!-- Loading Screen -->
+    <!-- Debug Info -->
+    <div id="debugInfo" class="debug-info"></div>
+
+    <!-- Loading Screen with Progress -->
     <div id="loading" class="loading-screen">
         <div class="loading-spinner"></div>
-        <p>Loading Payment Gateway...</p>
+        <h2>Loading Payment Gateway...</h2>
+        <p id="loadingStatus">Initializing application...</p>
+        <div class="loading-progress">
+            <div class="loading-progress-bar"></div>
+        </div>
+        <div style="margin-top: 2rem; font-size: 0.9rem; opacity: 0.8;">
+            <p id="loadingTimer">Time elapsed: 0s</p>
+            <button onclick="skipLoading()" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); padding: 0.5rem 1rem; border-radius: 4px; margin-top: 1rem; cursor: pointer;">
+                Skip Loading
+            </button>
+        </div>
+    </div>
+
+    <!-- Error Fallback Screen -->
+    <div id="errorFallback" class="error-fallback">
+        <div class="error-content">
+            <div class="error-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h2 id="errorTitle">Application Error</h2>
+            <p id="errorMessage">Unable to load the application. Please try again.</p>
+            <div class="error-buttons">
+                <button onclick="location.reload()" class="btn btn-primary">
+                    <i class="fas fa-redo"></i> Reload Application
+                </button>
+                <button onclick="resetApp()" class="btn btn-danger">
+                    <i class="fas fa-trash"></i> Clear Cache & Reload
+                </button>
+                <button onclick="showDebugInfo()" class="btn" style="background: #6c757d; color: white;">
+                    <i class="fas fa-bug"></i> Show Debug Info
+                </button>
+            </div>
+            <div id="debugDetails" style="display: none; margin-top: 2rem; text-align: left; background: #f5f5f5; padding: 1rem; border-radius: 8px; font-family: monospace; font-size: 0.9rem;">
+                <h4>Debug Information:</h4>
+                <pre id="debugContent"></pre>
+            </div>
+        </div>
     </div>
 
     <!-- Auth Screen -->
-    <div id="authScreen" class="auth-container">
+    <div id="authScreen" class="auth-container" style="display: none;">
         <div class="auth-card">
             <div class="logo-section">
                 <i class="fas fa-exchange-alt"></i>
                 <h2>Pakasir Payment</h2>
                 <p>Payment Gateway System</p>
+                <p style="font-size: 0.9rem; color: #666; margin-top: 0.5rem;">
+                    <i class="fas fa-info-circle"></i> 
+                    Demo: fathirsthore@yahoo.com / DX#55asDf@fathir
+                </p>
             </div>
 
             <!-- Login Form -->
             <form id="loginForm" class="auth-form">
                 <div class="form-group">
                     <label for="loginEmail">Email</label>
-                    <input type="email" id="loginEmail" required autocomplete="email">
+                    <input type="email" id="loginEmail" required autocomplete="email" 
+                           placeholder="Enter your email" value="fathirsthore@yahoo.com">
                 </div>
                 <div class="form-group">
                     <label for="loginPassword">Password</label>
-                    <input type="password" id="loginPassword" required autocomplete="current-password">
+                    <input type="password" id="loginPassword" required autocomplete="current-password"
+                           placeholder="Enter your password" value="DX#55asDf@fathir">
                 </div>
-                <button type="submit" class="btn btn-primary">
+                <button type="submit" class="btn btn-primary btn-block">
                     <i class="fas fa-sign-in-alt"></i> Login
                 </button>
-                <p class="auth-switch">Don't have an account? <a href="#" id="showRegister">Register here</a></p>
+                <p class="auth-switch" style="text-align: center; margin-top: 1.5rem; color: #666;">
+                    Don't have an account? 
+                    <a href="#" id="showRegister" style="color: #3f51b5; text-decoration: none; font-weight: bold;">
+                        Register here
+                    </a>
+                </p>
             </form>
 
             <!-- Register Form -->
             <form id="registerForm" class="auth-form" style="display: none;">
                 <div class="form-group">
                     <label for="registerName">Full Name</label>
-                    <input type="text" id="registerName" required>
+                    <input type="text" id="registerName" required placeholder="Enter your full name">
                 </div>
                 <div class="form-group">
                     <label for="registerEmail">Email</label>
-                    <input type="email" id="registerEmail" required autocomplete="email">
+                    <input type="email" id="registerEmail" required autocomplete="email" 
+                           placeholder="Enter your email">
                 </div>
                 <div class="form-group">
                     <label for="registerPhone">Phone Number</label>
-                    <input type="tel" id="registerPhone" required>
+                    <input type="tel" id="registerPhone" required placeholder="Enter your phone number">
                 </div>
                 <div class="form-group">
                     <label for="registerPassword">Password</label>
                     <input type="password" id="registerPassword" required autocomplete="new-password" 
-                           minlength="8" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$"
-                           title="Minimal 8 karakter, mengandung huruf besar, kecil, dan angka">
+                           placeholder="Enter password (min 8 characters)">
                 </div>
                 <div class="form-group">
                     <label for="registerConfirmPassword">Confirm Password</label>
-                    <input type="password" id="registerConfirmPassword" required autocomplete="new-password">
+                    <input type="password" id="registerConfirmPassword" required autocomplete="new-password"
+                           placeholder="Confirm your password">
                 </div>
-                <button type="submit" class="btn btn-success">
+                <button type="submit" class="btn btn-success btn-block">
                     <i class="fas fa-user-plus"></i> Register
                 </button>
-                <p class="auth-switch">Already have an account? <a href="#" id="showLogin">Login here</a></p>
+                <p class="auth-switch" style="text-align: center; margin-top: 1.5rem; color: #666;">
+                    Already have an account? 
+                    <a href="#" id="showLogin" style="color: #3f51b5; text-decoration: none; font-weight: bold;">
+                        Login here
+                    </a>
+                </p>
             </form>
         </div>
     </div>
@@ -89,20 +387,21 @@
     <div id="appScreen" style="display: none;">
         <!-- Header -->
         <header class="app-header">
-            <div class="logo">
-                <i class="fas fa-exchange-alt"></i>
+            <div class="logo" style="display: flex; align-items: center; gap: 1rem;">
+                <i class="fas fa-exchange-alt" style="font-size: 2.5rem; background: rgba(255, 255, 255, 0.1); padding: 0.8rem; border-radius: 50%;"></i>
                 <div>
-                    <h1>Pakasir Payment</h1>
-                    <span>Payment Gateway & Withdrawal System</span>
+                    <h1 style="font-size: 1.8rem; font-weight: 700; margin-bottom: 0.25rem;">Pakasir Payment</h1>
+                    <span style="font-size: 0.9rem; opacity: 0.9;">Payment Gateway & Withdrawal System</span>
                 </div>
             </div>
-            <div class="user-info">
-                <div class="user-badge">
+
+            <div class="user-info" style="display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap;">
+                <div class="user-badge" style="background: rgba(255, 255, 255, 0.15); padding: 0.75rem 1.25rem; border-radius: 50px; display: flex; align-items: center; gap: 0.75rem;">
                     <i class="fas fa-user"></i>
                     <span id="userName">User</span>
-                    <span id="userRole" class="badge badge-primary">User</span>
+                    <span id="userRole" style="padding: 0.375rem 0.75rem; border-radius: 50px; font-size: 0.875rem; font-weight: 600; background: #d6e4ff; color: #0d47a1;">User</span>
                 </div>
-                <div class="balance">
+                <div class="balance" style="background: #4caf50; color: white; padding: 0.75rem 1.25rem; border-radius: 50px; font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
                     <i class="fas fa-wallet"></i>
                     <span id="userBalance">Rp 0</span>
                 </div>
@@ -137,51 +436,103 @@
 
             <!-- Tab Contents -->
             <div class="tab-content active" id="dashboardTab">
-                <!-- Dashboard content -->
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <i class="fas fa-wallet"></i>
-                        <h3 id="totalBalance">Rp 0</h3>
-                        <p>Total Balance</p>
+                <div style="margin: 1rem;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                        <div class="stat-card" style="background: white; border-radius: 12px; padding: 1.5rem; text-align: center; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);">
+                            <i class="fas fa-wallet" style="font-size: 2.5rem; color: #3f51b5; margin-bottom: 1rem;"></i>
+                            <h3 id="totalBalance" style="font-size: 2rem; font-weight: 700; color: #1a237e; margin: 0.5rem 0;">Rp 0</h3>
+                            <p style="color: #6c757d; font-size: 0.9rem;">Total Balance</p>
+                        </div>
+                        
+                        <div class="stat-card" style="background: white; border-radius: 12px; padding: 1.5rem; text-align: center; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);">
+                            <i class="fas fa-chart-line" style="font-size: 2.5rem; color: #3f51b5; margin-bottom: 1rem;"></i>
+                            <h3 id="monthlyIncome" style="font-size: 2rem; font-weight: 700; color: #1a237e; margin: 0.5rem 0;">Rp 0</h3>
+                            <p style="color: #6c757d; font-size: 0.9rem;">Monthly Income</p>
+                        </div>
                     </div>
-                    <!-- Add more stat cards -->
+                    
+                    <div style="margin-top: 1.5rem;">
+                        <button onclick="switchTab('deposit')" class="btn btn-primary" style="margin-right: 1rem;">
+                            <i class="fas fa-qrcode"></i> Deposit Now
+                        </button>
+                        <button onclick="switchTab('history')" class="btn" style="background: #ff9800; color: white;">
+                            <i class="fas fa-history"></i> View History
+                        </button>
+                    </div>
                 </div>
             </div>
 
-            <!-- Other tabs content -->
+            <!-- Deposit Tab -->
             <div class="tab-content" id="depositTab">
-                <!-- Deposit form -->
+                <div style="margin: 1rem; max-width: 500px;">
+                    <div class="card" style="background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); margin-bottom: 1.5rem;">
+                        <h3 style="font-size: 1.25rem; font-weight: 600; color: #1a237e; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
+                            <i class="fas fa-qrcode"></i> Create Payment
+                        </h3>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Amount (IDR)</label>
+                            <input type="number" id="depositAmount" class="form-control" 
+                                   placeholder="Minimum Rp 1,000" min="1000" step="1000" value="10000">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Payment Note (Optional)</label>
+                            <input type="text" id="depositNote" class="form-control" 
+                                   placeholder="Enter payment description">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Payment Type</label>
+                            <select id="paymentType" class="form-control">
+                                <option value="qris">QRIS (Instan)</option>
+                                <option value="bank_transfer">Bank Transfer</option>
+                                <option value="e-wallet">E-Wallet</option>
+                            </select>
+                        </div>
+                        
+                        <button onclick="createPayment()" class="btn btn-success btn-block">
+                            <i class="fas fa-bolt"></i> Create Payment
+                        </button>
+                        
+                        <div id="depositError" style="color: #f44336; margin-top: 1rem; display: none;"></div>
+                    </div>
+                    
+                    <div id="qrDisplay" style="display: none;">
+                        <!-- QR display will be shown here -->
+                    </div>
+                </div>
             </div>
 
-            <div class="tab-content" id="withdrawTabContent">
-                <!-- Withdraw form -->
-            </div>
-
+            <!-- Other tabs (simplified for demo) -->
             <div class="tab-content" id="historyTab">
-                <!-- History table -->
+                <div style="margin: 1rem;">
+                    <h3>Transaction History</h3>
+                    <p>Coming soon...</p>
+                </div>
             </div>
-
+            
             <div class="tab-content" id="informationTab">
-                <!-- News content -->
+                <div style="margin: 1rem;">
+                    <h3>News & Information</h3>
+                    <p>No announcements yet.</p>
+                </div>
             </div>
-
+            
             <div class="tab-content" id="adminTabContent">
-                <!-- Admin panel -->
+                <div style="margin: 1rem;">
+                    <h3>Admin Panel</h3>
+                    <p>Admin features coming soon...</p>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="withdrawTabContent">
+                <div style="margin: 1rem;">
+                    <h3>Withdrawal</h3>
+                    <p>Withdrawal features coming soon...</p>
+                </div>
             </div>
         </main>
-    </div>
-
-    <!-- QR Modal -->
-    <div id="qrModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Payment QR Code</h3>
-                <button class="close-modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <img id="modalQRImage" src="" alt="QR Code">
-            </div>
-        </div>
     </div>
 
     <!-- Toast Container -->
@@ -190,7 +541,560 @@
     <!-- External JS -->
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     
-    <!-- Internal JS -->
-    <script src="/script.js" type="module"></script>
+    <!-- Main Application Script -->
+    <script>
+        // =============================================
+        // GLOBAL VARIABLES
+        // =============================================
+        let currentUser = null;
+        let loadingTimer = null;
+        let startTime = Date.now();
+        let appInitialized = false;
+
+        // =============================================
+        // DOM ELEMENTS
+        // =============================================
+        const elements = {
+            loading: document.getElementById('loading'),
+            loadingStatus: document.getElementById('loadingStatus'),
+            loadingTimer: document.getElementById('loadingTimer'),
+            errorFallback: document.getElementById('errorFallback'),
+            errorTitle: document.getElementById('errorTitle'),
+            errorMessage: document.getElementById('errorMessage'),
+            debugContent: document.getElementById('debugContent'),
+            debugInfo: document.getElementById('debugInfo'),
+            authScreen: document.getElementById('authScreen'),
+            appScreen: document.getElementById('appScreen'),
+            loginForm: document.getElementById('loginForm'),
+            registerForm: document.getElementById('registerForm'),
+            showRegister: document.getElementById('showRegister'),
+            showLogin: document.getElementById('showLogin'),
+            logoutBtn: document.getElementById('logoutBtn')
+        };
+
+        // =============================================
+        // UTILITY FUNCTIONS
+        // =============================================
+        function updateLoadingStatus(status) {
+            if (elements.loadingStatus) {
+                elements.loadingStatus.textContent = status;
+            }
+            console.log('Loading:', status);
+        }
+
+        function updateLoadingTimer() {
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            if (elements.loadingTimer) {
+                elements.loadingTimer.textContent = `Time elapsed: ${elapsed}s`;
+            }
+        }
+
+        function showToast(message, type = 'info') {
+            try {
+                const backgroundColor = type === 'success' ? '#4caf50' : 
+                                     type === 'error' ? '#f44336' : 
+                                     type === 'warning' ? '#ff9800' : '#2196f3';
+                
+                if (typeof Toastify === 'function') {
+                    Toastify({
+                        text: message,
+                        duration: 3000,
+                        gravity: "top",
+                        position: "right",
+                        backgroundColor,
+                        stopOnFocus: true
+                    }).showToast();
+                } else {
+                    // Fallback to alert if Toastify not loaded
+                    alert(message);
+                }
+            } catch (error) {
+                console.error('Toast error:', error);
+            }
+        }
+
+        function showError(title, message, details = null) {
+            console.error('App Error:', title, message, details);
+            
+            // Hide loading
+            elements.loading.style.display = 'none';
+            elements.authScreen.style.display = 'none';
+            elements.appScreen.style.display = 'none';
+            
+            // Show error
+            elements.errorTitle.textContent = title;
+            elements.errorMessage.textContent = message;
+            elements.errorFallback.style.display = 'block';
+            
+            if (details) {
+                elements.debugContent.textContent = JSON.stringify(details, null, 2);
+            }
+        }
+
+        function showDebugInfo() {
+            const details = {
+                timestamp: new Date().toISOString(),
+                userAgent: navigator.userAgent,
+                localStorage: {
+                    token: localStorage.getItem('pakasir_token') ? 'Exists' : 'Empty',
+                    user: localStorage.getItem('pakasir_user') ? 'Exists' : 'Empty'
+                },
+                currentUser: currentUser,
+                appInitialized: appInitialized
+            };
+            
+            elements.debugContent.textContent = JSON.stringify(details, null, 2);
+            document.getElementById('debugDetails').style.display = 'block';
+        }
+
+        function resetApp() {
+            localStorage.clear();
+            sessionStorage.clear();
+            showToast('Cache cleared successfully', 'success');
+            setTimeout(() => location.reload(), 1000);
+        }
+
+        function skipLoading() {
+            clearInterval(loadingTimer);
+            initializeApp();
+        }
+
+        // =============================================
+        // INITIALIZATION FUNCTIONS
+        // =============================================
+        function initializeApp() {
+            if (appInitialized) return;
+            appInitialized = true;
+            
+            updateLoadingStatus('Starting application...');
+            
+            try {
+                // Start loading timer
+                loadingTimer = setInterval(updateLoadingTimer, 1000);
+                
+                // Check if user is already logged in
+                setTimeout(() => {
+                    checkAuthentication();
+                }, 1000);
+                
+            } catch (error) {
+                showError('Initialization Failed', error.message, error);
+            }
+        }
+
+        function checkAuthentication() {
+            updateLoadingStatus('Checking authentication...');
+            
+            try {
+                // Check localStorage for existing session
+                const userStr = localStorage.getItem('pakasir_user');
+                const token = localStorage.getItem('pakasir_token');
+                
+                if (userStr && token) {
+                    try {
+                        const user = JSON.parse(userStr);
+                        updateLoadingStatus('User found, loading application...');
+                        setTimeout(() => loginSuccess(user), 500);
+                        return;
+                    } catch (e) {
+                        console.warn('Invalid user data in storage:', e);
+                        localStorage.removeItem('pakasir_user');
+                        localStorage.removeItem('pakasir_token');
+                    }
+                }
+                
+                // No valid session, show login
+                updateLoadingStatus('Ready to login...');
+                showLoginScreen();
+                
+            } catch (error) {
+                showError('Authentication Error', error.message, error);
+            }
+        }
+
+        function showLoginScreen() {
+            updateLoadingStatus('Showing login screen...');
+            
+            // Hide loading with fade out
+            elements.loading.style.opacity = '0';
+            setTimeout(() => {
+                elements.loading.style.display = 'none';
+                elements.authScreen.style.display = 'flex';
+                elements.loading.style.opacity = '1';
+                
+                // Setup login form
+                setupLoginForm();
+                
+                clearInterval(loadingTimer);
+                showToast('Welcome to Pakasir Payment Gateway', 'info');
+            }, 300);
+        }
+
+        function setupLoginForm() {
+            // Login form submission
+            elements.loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const email = document.getElementById('loginEmail').value.trim();
+                const password = document.getElementById('loginPassword').value.trim();
+                
+                if (!email || !password) {
+                    showToast('Please enter email and password', 'error');
+                    return;
+                }
+                
+                // Demo login - NO API CALLS
+                handleDemoLogin(email, password);
+            });
+            
+            // Register form toggle
+            elements.showRegister?.addEventListener('click', function(e) {
+                e.preventDefault();
+                elements.loginForm.style.display = 'none';
+                elements.registerForm.style.display = 'block';
+            });
+            
+            elements.showLogin?.addEventListener('click', function(e) {
+                e.preventDefault();
+                elements.registerForm.style.display = 'none';
+                elements.loginForm.style.display = 'block';
+            });
+            
+            // Register form submission
+            elements.registerForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const name = document.getElementById('registerName').value.trim();
+                const email = document.getElementById('registerEmail').value.trim();
+                const phone = document.getElementById('registerPhone').value.trim();
+                const password = document.getElementById('registerPassword').value;
+                const confirmPassword = document.getElementById('registerConfirmPassword').value;
+                
+                if (!name || !email || !phone || !password || !confirmPassword) {
+                    showToast('Please fill all fields', 'error');
+                    return;
+                }
+                
+                if (password !== confirmPassword) {
+                    showToast('Passwords do not match', 'error');
+                    return;
+                }
+                
+                if (password.length < 8) {
+                    showToast('Password must be at least 8 characters', 'error');
+                    return;
+                }
+                
+                // Demo registration
+                const demoUser = {
+                    id: 'user_' + Date.now(),
+                    email: email,
+                    name: name,
+                    phone: phone,
+                    role: 'user',
+                    balance: 0,
+                    status: 'active'
+                };
+                
+                localStorage.setItem('pakasir_user', JSON.stringify(demoUser));
+                localStorage.setItem('pakasir_token', 'demo_token_' + Date.now());
+                
+                showToast('Registration successful!', 'success');
+                loginSuccess(demoUser);
+            });
+        }
+
+        function handleDemoLogin(email, password) {
+            updateLoadingStatus('Authenticating...');
+            
+            // Demo credentials
+            const demoCredentials = {
+                'fathirsthore@yahoo.com': {
+                    password: 'DX#55asDf@fathir',
+                    user: {
+                        id: 'admin_001',
+                        email: 'fathirsthore@yahoo.com',
+                        name: 'Admin Fathir',
+                        phone: '6281234567890',
+                        role: 'admin',
+                        balance: 50000000,
+                        status: 'active'
+                    }
+                },
+                'demo@pakasir.com': {
+                    password: 'demo123',
+                    user: {
+                        id: 'user_demo_001',
+                        email: 'demo@pakasir.com',
+                        name: 'Demo User',
+                        phone: '628987654321',
+                        role: 'user',
+                        balance: 100000,
+                        status: 'active'
+                    }
+                }
+            };
+            
+            setTimeout(() => {
+                if (demoCredentials[email] && demoCredentials[email].password === password) {
+                    const user = demoCredentials[email].user;
+                    
+                    localStorage.setItem('pakasir_user', JSON.stringify(user));
+                    localStorage.setItem('pakasir_token', 'demo_token_' + Date.now());
+                    
+                    loginSuccess(user);
+                    showToast('Login successful!', 'success');
+                } else {
+                    showToast('Invalid email or password', 'error');
+                    updateLoadingStatus('Login failed');
+                    
+                    // Show demo credentials hint
+                    document.getElementById('loginEmail').value = 'fathirsthore@yahoo.com';
+                    document.getElementById('loginPassword').value = 'DX#55asDf@fathir';
+                }
+            }, 1000);
+        }
+
+        function loginSuccess(user) {
+            currentUser = user;
+            
+            // Hide auth screen
+            elements.authScreen.style.display = 'none';
+            
+            // Update UI
+            updateUserInterface();
+            
+            // Show app screen
+            elements.appScreen.style.display = 'block';
+            
+            // Setup app functionality
+            setupAppFunctionality();
+            
+            clearInterval(loadingTimer);
+            updateDebugInfo('Logged in as: ' + user.email);
+        }
+
+        function updateUserInterface() {
+            if (!currentUser) return;
+            
+            // Update user info
+            document.getElementById('userName').textContent = currentUser.name;
+            document.getElementById('userBalance').textContent = formatCurrency(currentUser.balance);
+            
+            // Update user role
+            const userRoleElement = document.getElementById('userRole');
+            if (currentUser.role === 'admin') {
+                userRoleElement.textContent = 'Admin';
+                userRoleElement.style.background = '#ff9800';
+                userRoleElement.style.color = '#856404';
+                document.getElementById('adminTab').style.display = 'inline-flex';
+                document.getElementById('withdrawTab').style.display = 'inline-flex';
+            } else {
+                userRoleElement.textContent = 'User';
+                userRoleElement.style.background = '#d6e4ff';
+                userRoleElement.style.color = '#0d47a1';
+                document.getElementById('adminTab').style.display = 'none';
+                document.getElementById('withdrawTab').style.display = 'none';
+            }
+        }
+
+        function setupAppFunctionality() {
+            // Setup logout
+            elements.logoutBtn.addEventListener('click', function() {
+                localStorage.clear();
+                sessionStorage.clear();
+                showToast('Logged out successfully', 'info');
+                setTimeout(() => location.reload(), 1000);
+            });
+            
+            // Setup tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Update active tab
+                    document.querySelectorAll('.tab').forEach(t => {
+                        t.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // Show corresponding content
+                    const tabName = this.dataset.tab;
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.style.display = 'none';
+                    });
+                    
+                    const contentId = tabName + 'Tab';
+                    const content = document.getElementById(contentId);
+                    if (content) {
+                        content.style.display = 'block';
+                        
+                        // Load tab-specific content
+                        switch(tabName) {
+                            case 'dashboard':
+                                loadDashboard();
+                                break;
+                            case 'deposit':
+                                // Reset deposit form
+                                document.getElementById('depositAmount').value = '10000';
+                                document.getElementById('depositNote').value = '';
+                                break;
+                        }
+                    }
+                });
+            });
+            
+            // Load initial dashboard
+            loadDashboard();
+        }
+
+        // =============================================
+        // APP FEATURES
+        // =============================================
+        function loadDashboard() {
+            if (!currentUser) return;
+            
+            document.getElementById('totalBalance').textContent = formatCurrency(currentUser.balance);
+            
+            // Simulate monthly income
+            const monthlyIncome = currentUser.balance * 0.1;
+            document.getElementById('monthlyIncome').textContent = formatCurrency(monthlyIncome);
+        }
+
+        function createPayment() {
+            const amount = parseInt(document.getElementById('depositAmount').value);
+            const note = document.getElementById('depositNote').value;
+            const paymentType = document.getElementById('paymentType').value;
+            
+            if (!amount || amount < 1000) {
+                showToast('Minimum amount is Rp 1,000', 'error');
+                return;
+            }
+            
+            // Simulate payment creation
+            const paymentId = 'PAY' + Date.now() + Math.random().toString(36).substr(2, 6).toUpperCase();
+            
+            showToast('Payment created: ' + paymentId, 'success');
+            
+            // Show QR code (demo)
+            const qrDisplay = document.getElementById('qrDisplay');
+            qrDisplay.innerHTML = `
+                <div class="card" style="background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);">
+                    <h3 style="font-size: 1.25rem; font-weight: 600; color: #1a237e; margin-bottom: 1.5rem;">
+                        <i class="fas fa-qrcode"></i> Payment Details
+                    </h3>
+                    
+                    <div style="text-align: center;">
+                        <div style="width: 200px; height: 200px; margin: 0 auto 1rem; background: #f0f0f0; display: flex; align-items: center; justify-content: center; border-radius: 8px;">
+                            <i class="fas fa-qrcode" style="font-size: 5rem; color: #666;"></i>
+                        </div>
+                        
+                        <p><strong>Payment ID:</strong> ${paymentId}</p>
+                        <p><strong>Amount:</strong> ${formatCurrency(amount)}</p>
+                        <p><strong>Status:</strong> <span style="padding: 0.25rem 0.5rem; background: #fff3cd; color: #856404; border-radius: 4px;">Pending</span></p>
+                        
+                        <div style="margin-top: 1.5rem;">
+                            <button onclick="simulatePaymentSuccess('${paymentId}', ${amount})" class="btn btn-success" style="margin-right: 0.5rem;">
+                                <i class="fas fa-check"></i> Simulate Success
+                            </button>
+                            <button onclick="document.getElementById('qrDisplay').style.display = 'none'" class="btn btn-danger">
+                                <i class="fas fa-times"></i> Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            qrDisplay.style.display = 'block';
+        }
+
+        function simulatePaymentSuccess(paymentId, amount) {
+            if (currentUser) {
+                currentUser.balance += amount;
+                updateUserInterface();
+                localStorage.setItem('pakasir_user', JSON.stringify(currentUser));
+                
+                showToast('Payment successful! Balance updated.', 'success');
+                document.getElementById('qrDisplay').style.display = 'none';
+                
+                // Reload dashboard
+                loadDashboard();
+            }
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => {
+                if (tab.dataset.tab === tabName) {
+                    tab.click();
+                }
+            });
+        }
+
+        // =============================================
+        // HELPER FUNCTIONS
+        // =============================================
+        function formatCurrency(amount) {
+            return 'Rp ' + amount.toLocaleString('id-ID');
+        }
+
+        function updateDebugInfo(message) {
+            elements.debugInfo.textContent = message;
+            elements.debugInfo.style.display = 'block';
+            
+            // Auto hide after 5 seconds
+            setTimeout(() => {
+                elements.debugInfo.style.display = 'none';
+            }, 5000);
+        }
+
+        // =============================================
+        // ERROR HANDLING
+        // =============================================
+        window.addEventListener('error', function(event) {
+            console.error('Global error:', event.error);
+            updateDebugInfo('Error: ' + event.error.message);
+            
+            // Don't show error fallback for minor errors
+            if (!event.error.message.includes('Loading')) {
+                showError('Runtime Error', event.error.message, {
+                    filename: event.filename,
+                    lineno: event.lineno,
+                    colno: event.colno
+                });
+            }
+        });
+
+        window.addEventListener('unhandledrejection', function(event) {
+            console.error('Unhandled promise rejection:', event.reason);
+            updateDebugInfo('Promise rejected: ' + event.reason);
+        });
+
+        // =============================================
+        // LOADING TIMEOUT SAFETY
+        // =============================================
+        setTimeout(() => {
+            if (!appInitialized && elements.loading.style.display !== 'none') {
+                console.warn('Loading timeout reached, forcing initialization');
+                initializeApp();
+            }
+        }, 8000); // 8 second timeout
+
+        // =============================================
+        // START APPLICATION
+        // =============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM Content Loaded');
+            updateLoadingStatus('DOM loaded, starting app...');
+            
+            // Start initialization after a short delay
+            setTimeout(initializeApp, 500);
+        });
+
+        // Fallback in case DOMContentLoaded doesn't fire
+        setTimeout(() => {
+            if (!appInitialized) {
+                console.warn('Fallback initialization');
+                initializeApp();
+            }
+        }, 3000);
+    </script>
 </body>
-                      </html>
+</html>
